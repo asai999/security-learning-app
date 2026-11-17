@@ -1,0 +1,153 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Security Learning</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        label {
+            display: block;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button {
+            padding: 10px 24px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Security Learning</h1>
+
+    <h2 id="title">読み込み中...</h2>
+    <p id="question"></p>
+
+    <form id="answer-form">
+        <div id="choices"></div>
+        <button id="submit-button" type="submit" disabled>
+            回答する
+        </button>
+    </form>
+
+    <p id="result" role="status"></p>
+
+    <script>
+        const questionId = 1;
+
+        // ① FastAPIから問題データを取得
+        async function loadQuestion() {
+            try {
+                const response = await fetch(
+                    `/questions/${questionId}`
+                );
+
+                if (!response.ok) {
+                    throw new Error("問題の取得に失敗しました");
+                }
+
+                const data = await response.json();
+
+                document.getElementById("title").textContent =
+                    data.title;
+
+                document.getElementById("question").textContent =
+                    data.question;
+
+                const container =
+                    document.getElementById("choices");
+
+                // 選択肢を動的に作成
+                for (const [key, value] of Object.entries(data.choices)) {
+                    const label = document.createElement("label");
+                    const input = document.createElement("input");
+
+                    input.type = "radio";
+                    input.name = "answer";
+                    input.value = key;
+                    input.required = true;
+
+                    label.append(
+                        input,
+                        document.createTextNode(` ${key}. ${value}`)
+                    );
+                    container.appendChild(label);
+                }
+
+                document.getElementById("submit-button").disabled = false;
+            } catch (error) {
+                document.getElementById("result").textContent =
+                    error.message;
+            }
+        }
+
+        // ② 回答をFastAPIにPOSTする
+        document.getElementById("answer-form")
+            .addEventListener("submit", async function(event) {
+
+                event.preventDefault();
+
+                const selected = document.querySelector(
+                    'input[name="answer"]:checked'
+                );
+
+                if (!selected) return;
+
+                const button =
+                    document.getElementById("submit-button");
+                const result =
+                    document.getElementById("result");
+
+                button.disabled = true;
+
+                try {
+                    const response = await fetch(
+                        `/questions/${questionId}/answer`,
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                answer: selected.value
+                            })
+                        }
+                    );
+
+                    if (!response.ok) {
+                        throw new Error("採点に失敗しました");
+                    }
+
+                    const data = await response.json();
+
+                    result.textContent =
+                        (data.is_correct ? "正解！" : "不正解。") +
+                        ` 正解は${data.correct_answer}です。` +
+                        data.explanation;
+
+                } catch (error) {
+                    result.textContent = error.message;
+                } finally {
+                    button.disabled = false;
+                }
+            });
+
+        // ページ表示時に問題を取得
+        loadQuestion();
+    </script>
+</body>
+</html>

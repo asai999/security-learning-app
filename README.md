@@ -16,3 +16,5 @@ Python / FastAPI / SQLite / HTML / JavaScript
 4. 学んだこと
 
 API、SQL、データベース設計、フロントエンドとバックエンドの連携。
+
+https://zenn.dev/nasubi999/articles/87a53b3a15e208

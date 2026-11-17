@@ -13,10 +13,6 @@ Python / FastAPI / SQLite / HTML / CSS / JavaScript
 - SQLiteへの回答履歴の保存
 - HTML/JavaScriptによる問題演習画面
 
-4. システム構成
+4. 学んだこと
 
-ブラウザ → FastAPI → SQLite の関係を簡単な図で示す。
-
-5. 学んだこと
-
-HTTP通信、REST APIの基礎、SQL、データベース設計、フロントエンドとバックエンドの連携。
+API、SQL、データベース設計、フロントエンドとバックエンドの連携。

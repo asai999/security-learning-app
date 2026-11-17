@@ -5,7 +5,7 @@ FastAPIとSQLiteを用いて、4択形式のセキュリティ演習問題を解
 
 2. 使用技術
 
-Python / FastAPI / SQLite / HTML / CSS / JavaScript
+Python / FastAPI / SQLite / HTML / JavaScript
 
 3. 実装した機能
 - GETによる問題取得
